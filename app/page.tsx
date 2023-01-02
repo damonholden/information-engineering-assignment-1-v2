@@ -1,18 +1,26 @@
 import styles from './page.module.css';
 import { NextRequest } from 'next/server';
 
-async function getData() {
+async function getData(): Promise<string> {
+  const xApiKey = process.env.BTEX_API_KEY;
+
+  if (!xApiKey) {
+    console.log('no API key');
+    return 'No API key';
+  }
+
   const res = await fetch(
     'https://api-b.iot.bt.com:53054/dataexchange/adept/sensors/feeds/cda46b57-7208-4ad1-84b0-a8d5edb2fa2a/metadata?version=1',
     {
       method: 'GET',
       headers: {
-        'x-api-key': process.env.BTEX_API_KEY,
+        'x-api-key': xApiKey,
       },
     },
   );
+
   const data = await res.json();
-  return JSON.stringify(data, null, 4);
+  return JSON.stringify(data, null, 2);
 }
 
 export default async function Home() {
