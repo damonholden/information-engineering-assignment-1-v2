@@ -1,5 +1,8 @@
 import styles from './page.module.css';
 import FeedChart from './FeedChart';
+import { Mandali } from '@next/font/google';
+
+const mandali = Mandali({ weight: '400' });
 
 const feed = 'cda46b57-7208-4ad1-84b0-a8d5edb2fa2a';
 
@@ -117,9 +120,11 @@ export default async function Home() {
   );
 
   return (
-    <main className={styles.main}>
+    <main className={mandali.className}>
       <h1>Information Engineering: Assignment 1</h1>
-      <FeedChart dataSet={mergedDataPoints} />
+      <div className='chart-container'>
+        <FeedChart dataSet={mergedDataPoints} />
+      </div>
       <h2>Meta Data</h2>
       <code>
         <pre>{metaData}</pre>
