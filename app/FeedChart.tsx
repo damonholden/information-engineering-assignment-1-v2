@@ -4,56 +4,89 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
 );
 
-const options = {
+export const options = {
   responsive: true,
+  interaction: {
+    mode: 'index' as const,
+    intersect: false,
+  },
+  stacked: false,
   plugins: {
-    legend: {
-      position: 'top' as const,
-    },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      text: 'Chart.js Line Chart - Multi Axis',
+    },
+  },
+  scales: {
+    y: {
+      type: 'linear' as const,
+      display: true,
+      position: 'left' as const,
+    },
+    y1: {
+      type: 'linear' as const,
+      display: true,
+      position: 'right' as const,
+      grid: {
+        drawOnChartArea: false,
+      },
+      labels: {
+        show: true,
+      },
     },
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export default function Chart({
+  dataSet,
+}: {
+  dataSet: {
+    eventTime: string;
+    vehicleCount: number;
+    averageSpeed: number;
+  }[];
+}) {
+  const labels = dataSet.map((dataPoint) => dataPoint.eventTime);
 
-const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => 13),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => 27),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
-
-export default function Chart() {
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Number of Vehicles',
+        data: dataSet.map((dataPoint) => dataPoint.vehicleCount),
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        yAxisID: 'y',
+      },
+      {
+        label: 'Average Speed',
+        data: dataSet.map((dataPoint) => dataPoint.averageSpeed),
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        yAxisID: 'y1',
+      },
+    ],
+  };
   return (
-    <Bar
+    <Line
       options={options}
       data={data}
     />

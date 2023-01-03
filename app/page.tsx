@@ -94,15 +94,32 @@ export default async function Home() {
     feedId: feed,
     dataStreamId: 1,
   });
-  const dataPoints = await getDataPointsOfStream({
+  const dataPoints1 = await getDataPointsOfStream({
     feedId: feed,
     dataStreamId: 1,
   });
+  const dataPoints2 = await getDataPointsOfStream({
+    feedId: feed,
+    dataStreamId: 2,
+  });
+
+  const mergedDataPoints = JSON.parse(dataPoints1).data.map(
+    (dataPointFrom1: { eventTime: string; value: number }) => {
+      return {
+        eventTime: dataPointFrom1.eventTime,
+        vehicleCount: dataPointFrom1.value,
+        averageSpeed: JSON.parse(dataPoints2).data.find(
+          (dataPointFrom2: { eventTime: string; value: number }) =>
+            dataPointFrom1.eventTime === dataPointFrom2.eventTime,
+        ).value,
+      };
+    },
+  );
 
   return (
     <main className={styles.main}>
       <h1>Information Engineering: Assignment 1</h1>
-      <FeedChart />
+      <FeedChart dataSet={mergedDataPoints} />
       <h2>Meta Data</h2>
       <code>
         <pre>{metaData}</pre>
@@ -117,7 +134,7 @@ export default async function Home() {
       </code>
       <h2>Point Data</h2>
       <code>
-        <pre>{dataPoints}</pre>
+        <pre>{JSON.stringify(mergedDataPoints, null, 2)}</pre>
       </code>
     </main>
   );
